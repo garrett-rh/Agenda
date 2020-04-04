@@ -32,13 +32,13 @@ def menu():
     print('\n')
 
     if choice == 1:
-        date();print('\n');menu();
+        date();input();menu();
     elif choice == 2:
-        course();print('\n');menu()
+        course();input();menu()
     elif choice == 3:
-        status();print('\n');menu()
+        status();input();menu()
     elif choice == 4:
-        edit();print('\n');menu()
+        edit();input();menu()
     elif choice == 5:
         manage()
     elif choice == 6:
