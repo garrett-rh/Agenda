@@ -133,7 +133,6 @@ def manage():
             print(f"{i[0]} -- {i[4]:15} {i[1]} {i[2]:10} {i[3]}")
     
         entry = int(input("Which entry would you like removed?"))
-        print(type(entry))
         print(f"Are you sure you want to remove entry {entry} (y/n)? ")
         confirm = str(input("-->"))
 
