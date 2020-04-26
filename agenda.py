@@ -26,7 +26,7 @@ def menu():
     3) View by Status.
     4) Edit the Agenda.
     5) Manage the Agenda.
-    6) Quit.
+    99) Quit.
 -->""")
     )
 
@@ -37,10 +37,10 @@ def menu():
     elif choice == 3:
         status();input();menu()
     elif choice == 4:
-        edit();input();menu()
+        edit();print();menu()
     elif choice == 5:
-        manage()
-    elif choice == 6:
+        manage();print();menu()
+    elif choice == 99:
         conn.commit()
         conn.close()
         quit()
@@ -131,6 +131,39 @@ def edit():
     
 def manage():
     
+    def delete():
+        yN = str(input("Are you sure you want to delete the agenda? (y/n)"))
+        if "y" in yN.lower():
+    
+            keepUnfinished = str(input("Would you like to keep all items without a status of 'Finished'?"))
+            if "y" in keepUnfinished.lower():
+                c.execute("SELECT * FROM agenda WHERE status != 'Finished'")
+                data = c.fetchall()
+    
+            else:
+                pass
+            c.execute("DELETE FROM agenda")
+            conn.commit()
+            
+            c.execute("""CREATE TABLE IF NOT EXISTS agenda(
+                ID integer,
+                date text,
+                class text,
+                assignment text,
+                status text
+                )"""
+                )
+            conn.commit()
+            for a in range(len(data)):
+                deleteID = a
+                (c.execute("INSERT INTO agenda(ID, date, class, assignment, status) VALUES(?,?,?,?,?)", 
+                    (deleteID, data[a][1], data[a][2], data[a][3], data[a][4])))
+                conn.commit()
+            print("Database deleted")
+            main()
+        else:
+            manage()
+    
     def removeEntry():
         c.execute("SELECT * FROM agenda")
         toBeRemoved = c.fetchall()
@@ -148,9 +181,9 @@ def manage():
             if "y" in more.lower():
                 removeEntry()
             else:
-                menu()
+                pass
         else:
-            menu()
+            pass
 
     def export():
         c.execute("SELECT * FROM agenda")
@@ -158,7 +191,7 @@ def manage():
             for i in c:
                 f.write(f"{i[4]:15} {i[1]} {i[2]:10} {i[3]}\n")
         print("Exported table to home folder...")
-        menu()
+
     def addEntry():
         c.execute("SELECT ID FROM agenda")
         idNum = c.fetchall()
@@ -185,8 +218,8 @@ def manage():
         if "y" in again.lower():
             addEntry()
         else:
-            menu()
-    manageChoice = int(input("1)Add Entry\n2)Remove Entry\n3)Export Table\n4)Delete Table\n-->"))
+            pass
+    manageChoice = int(input("1)Add Entry\n2)Remove Entry\n3)Export Agenda\n4)Delete Table\n-->"))
 
 
     if manageChoice == 1:
@@ -196,37 +229,7 @@ def manage():
     elif manageChoice == 3:
         export()
     elif manageChoice == 4:
-        yN = str(input("Are you sure you want to delete the agenda? (y/n)"))
-        if "y" in yN.lower():
-
-            keepUnfinished = str(input("Would you like to keep all items without a status of 'Finished'?"))
-            if "y" in keepUnfinished.lower():
-                c.execute("SELECT * FROM agenda WHERE status != 'Finished'")
-                data = c.fetchall()
-
-            else:
-                pass
-            c.execute("DELETE FROM agenda")
-            conn.commit()
-            
-            c.execute("""CREATE TABLE IF NOT EXISTS agenda(
-                ID integer,
-                date text,
-                class text,
-                assignment text,
-                status text
-                )"""
-                )
-            conn.commit()
-            for a in range(len(data)):
-                deleteID = a
-                (c.execute("INSERT INTO agenda(ID, date, class, assignment, status) VALUES(?,?,?,?,?)", 
-                    (deleteID, data[a][1], data[a][2], data[a][3], data[a][4])))
-                conn.commit()
-            print("Database deleted")
-            main()
-        else:
-            manage()
+        delete()
     else:
         print("Please enter a proper answer")
         manage()
