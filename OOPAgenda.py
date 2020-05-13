@@ -152,15 +152,12 @@ class Manage(Database):
             self.c.execute("DELETE FROM agenda")
             self.create_table()
             self.commit()
+            delete_id = -1
             for a in all_unfinished_entries:
-                delete_id = a
-                (self.c.execute("INSERT INTO agenda(ID, date, class, assignment, status) VALUES(?,?,?,?,?)",
-                    (delete_id, all_unfinished_entries[a][1], all_unfinished_entries[a][2], all_unfinished_entries[a][3], all_unfinished_entries[a][4])))
+                delete_id +=1
+                (self.c.execute("INSERT INTO agenda(ID, date, class, assignment, status) VALUES(?,?,?,?,?)",(delete_id, a[1], a[2], a[3], a[4])))
             self.commit()
             print("Database deleted")
-            menu()
-        else:
-            self.__init__()
 
 def menu():
     choice = int(input("""Choose one of the following options
@@ -187,6 +184,8 @@ def menu():
     else:
         print("Not a proper input. Please try again.")
         menu()
+    print()
+    menu()
 
 menu()
 #if __name__ == "__main__":
